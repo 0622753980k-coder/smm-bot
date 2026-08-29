@@ -6,7 +6,6 @@ from flask import Flask
 TOKEN = '8904483870:AAF_O56epbVmcEkldoLO0Xdd49SALTqFYJg'
 ADMIN_ID = 8467707826
 GRIZZLY_API_KEY = '3335af0d250efb73bdc40ebf82fa42dd'
-
 SMM_API_KEY = '5f44258668604a14d48bd99270c1f8f4'
 SMM_API_URL = 'https://top4smm.com/api.php'
 
@@ -89,7 +88,7 @@ def g_smm():
         {'service': '401', 'name': 'TT Sub (Arzon)', 'category': 'tiktok sub follower', 'rate': '0.5', 'min': 100, 'max': 10000, 'description': "🔹 Sifat: Aralash TikTok obunachilari."},
         {'service': '402', 'name': 'TT Sub (Sifatli)', 'category': 'tiktok sub follower', 'rate': '1.0', 'min': 100, 'max': 10000, 'description': "🔹 Sifat: Yaxshi sifat. Videoni rekomendatsiyaga olib chiqishga yordam beradi."},
         {'service': '403', 'name': 'TT Sub (Premium)', 'category': 'tiktok sub follower', 'rate': '2.0', 'min': 100, 'max': 10000, 'description': "🔹 Sifat: Eng yuqori sifat, kafolatli obunachilar."}
-]def get_gz_pr(sc=None, cid=None):
+def get_gz_pr(sc=None, cid=None):
     try:
         url = f"https://api.grizzlysms.com/stubs/handler_api.php?api_key={GRIZZLY_API_KEY}&action=getPrices"
         if sc: url += f"&service={sc}"
@@ -330,7 +329,7 @@ def tg_top(c):
     mk.add(IB("🔙 Orqaga", callback_data="tg_p_0"))
     try: bot.edit_message_text("⭐ <b>TOP 6 davlat:</b>", c.message.chat.id, c.message.message_id, reply_markup=mk, parse_mode='HTML')
     except: pass
-    @bot.callback_query_handler(func=lambda c: c.data.startswith("ot_p_"))
+         @bot.callback_query_handler(func=lambda c: c.data.startswith("ot_p_"))
 def ot_pg(c):
     page = int(c.data.split('_')[2]); mk = IK(row_width=2); btns = []
     for cid, cname in C_LIST[page*8 : page*8+8]: btns.append(IB(f"{cname}", callback_data=f"ot_c_{cid}"))
@@ -483,18 +482,27 @@ def smc(c):
 @bot.callback_query_handler(func=lambda c: c.data.startswith("mc_"))
 def n_ss(c):
     _, p, cid = c.data.split('_')
+    
+    cat_map = {
+        'yt_sub': 'youtube sub follower',
+        'yt_watch': 'youtube watch time hour',
+        'yt_view': 'youtube view',
+        'yt_like': 'youtube like',
+        'yt_comment': 'youtube comment',
+        'tg_sub': 'telegram sub follower',
+        'tg_view': 'telegram view',
+        'ig_sub': 'instagram sub follower',
+        'tt_sub': 'tiktok sub follower'
+    }
+    
+    target_cat = cat_map.get(f"{p}_{cid}")
+    if not target_cat:
+        try: bot.edit_message_text(f"⚠️ Xizmat topilmadi.", c.message.chat.id, c.message.message_id, reply_markup=IK().add(IB("🔙 Orqaga", callback_data=f"mp_{p}")), parse_mode='HTML')
+        except: pass
+        return
+        
     s = g_smm()
-    
-    net_kws = {"yt": ["youtube", "yt"], "ig": ["instagram", "ig"], "tg": ["telegram", "tg"], "tt": ["tiktok", "tt"]}
-    srv_kws = {"sub": ["sub", "follower", "obuna"], "watch": ["watch", "time", "hour"], "view": ["view", "prosmotr"], "like": ["like"], "comment": ["comment"]}
-    
-    nk = net_kws.get(p, [""])
-    sk = srv_kws.get(cid, [""])
-    
-    f = []
-    for x in s:
-        txt = (str(x.get('name','')) + " " + str(x.get('category',''))).lower()
-        if any(n in txt for n in nk) and any(k in txt for k in sk): f.append(x)
+    f = [x for x in s if x.get('category') == target_cat]
                 
     if not f:
         try: bot.edit_message_text(f"⚠️ Ushbu bo'lim bo'yicha xizmat topilmadi.", c.message.chat.id, c.message.message_id, reply_markup=IK().add(IB("🔙 Orqaga", callback_data=f"mp_{p}")), parse_mode='HTML')
@@ -587,4 +595,4 @@ t = threading.Thread(target=run_server)
 t.start()
 
 bot.infinity_polling()
-    
+
