@@ -89,7 +89,7 @@ def g_smm():
         {'service': '402', 'name': 'TT Sub (Sifatli)', 'category': 'tiktok sub follower', 'rate': '1.0', 'min': 100, 'max': 10000, 'description': "🔹 Sifat: Yaxshi sifat. Videoni rekomendatsiyaga olib chiqishga yordam beradi."},
         {'service': '403', 'name': 'TT Sub (Premium)', 'category': 'tiktok sub follower', 'rate': '2.0', 'min': 100, 'max': 10000, 'description': "🔹 Sifat: Eng yuqori sifat, kafolatli obunachilar."}
   ]
-         def get_gz_pr(sc=None, cid=None):
+def get_gz_pr(sc=None, cid=None):
     try:
         url = f"https://api.grizzlysms.com/stubs/handler_api.php?api_key={GRIZZLY_API_KEY}&action=getPrices"
         if sc: url += f"&service={sc}"
